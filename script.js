@@ -331,6 +331,13 @@ function initLightbox() {
                     // Special case for images at the root of /img/
                     return `img/${filename.replace('../', '')}`;
                 }
+                
+                // For 'casa', images are directly in img/casa/
+                // For other flats, they are in img/flatId/galeria/
+                if (flatId === 'casa') {
+                    return `img/${flatId}/${filename}`;
+                }
+                
                 return `img/${flatId}/galeria/${filename}`;
             });
 
