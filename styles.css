@@ -451,6 +451,30 @@ p {
     margin-top: 2rem;
 }
 
+.units-instagram-cta {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.units-instagram-cta a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--clr-slate-blue);
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 0.8rem 1.5rem;
+    background: rgba(75, 101, 132, 0.05);
+    border-radius: 30px;
+    transition: var(--transition-fast);
+}
+
+.units-instagram-cta a:hover {
+    background: rgba(75, 101, 132, 0.1);
+    transform: translateY(-2px);
+    color: var(--clr-slate-blue-dark);
+}
+
 .unit-card {
     overflow: hidden;
     transition: var(--transition-smooth);
