@@ -249,6 +249,9 @@ function initLightbox() {
         ],
         brisas: [
             "GPTempDownload 2.JPG", "GPTempDownload 3.JPG", "GPTempDownload 4.JPG", "GPTempDownload 5.JPG", "GPTempDownload 6.JPG", "GPTempDownload 11.JPG"
+        ],
+        casa: [
+            "../frentecasa.png" // Relative to the gallery path logic or I'll fix the logic below
         ]
     };
 
@@ -257,8 +260,19 @@ function initLightbox() {
             e.preventDefault();
             const flatId = btn.getAttribute('data-flat');
 
+            if (!galleryMap[flatId]) {
+                console.warn(`No gallery found for flatId: ${flatId}`);
+                return;
+            }
+
             // Build image array specific to the selected flat
-            currentImages = galleryMap[flatId].map(filename => `img/${flatId}/galeria/${filename}`);
+            currentImages = galleryMap[flatId].map(filename => {
+                if (filename.startsWith('..')) {
+                    // Special case for images at the root of /img/
+                    return `img/${filename.replace('../', '')}`;
+                }
+                return `img/${flatId}/galeria/${filename}`;
+            });
 
             currentIndex = 0;
             updateLightbox();
