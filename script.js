@@ -217,10 +217,13 @@ function initBookingSystem() {
         statusBox.classList.add('hidden');
         statusBox.className = 'status-message hidden';
         statusBox.innerHTML = '';
-        whatsappBtn.classList.add('hidden');
+        // whatsappBtn remains visible now
         checkBtn.classList.remove('hidden');
         checkBtn.disabled = false;
         checkBtn.innerHTML = '<i class="ph ph-magnifying-glass"></i> Consultar Datas';
+        
+        // Reset to default generic link
+        whatsappBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=Olá! Gostaria de informações sobre reservas.`;
     }
 
     form.addEventListener('submit', async (e) => {
@@ -264,24 +267,18 @@ function initBookingSystem() {
                 const text = encodeURIComponent(`Olá! Tenho interesse em reservar o ${flatName}.\nAs datas que selecionei no site são de ${strIn} a ${strOut}.\nGostaria de mais informações e confirmar a reserva.`);
                 whatsappBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
 
-                checkBtn.classList.add('hidden');
-                whatsappBtn.classList.remove('hidden');
-                whatsappBtn.style.display = 'flex'; // Ensure it's visible as flex
+                // checkBtn.classList.add('hidden'); // Optional: keep both or hide? User said "deixe fixo", usually implies both are there.
+                // I'll keep both visible for better UX as they can re-check or chat.
             } else if (availability === false) {
                 statusBox.classList.add('status-unavailable');
                 statusBox.innerHTML = '<i class="ph ph-x-circle"></i> Indisponível. Estas datas já estão ocupadas.';
-                whatsappBtn.classList.add('hidden');
-                whatsappBtn.style.display = 'none';
             } else if (availability === 'error') {
                 statusBox.classList.add('status-unavailable'); 
                 statusBox.innerHTML = '<i class="ph ph-warning"></i> Não foi possível verificar em tempo real agora. Entre em contato para confirmar.';
                 
-                // Still show WhatsApp button as fallback
+                // Update WhatsApp button as fallback
                 const text = encodeURIComponent(`Olá! Gostaria de verificar a disponibilidade do ${flatName} de ${checkin} a ${checkout}. O site não conseguiu consultar automaticamente o calendário.`);
                 whatsappBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
-                whatsappBtn.classList.remove('hidden');
-                whatsappBtn.style.display = 'flex';
-                checkBtn.classList.add('hidden');
             }
         }, 800);
     });
