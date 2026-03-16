@@ -261,23 +261,26 @@ function initBookingSystem() {
                 const strIn = `${dateInArr[2]}/${dateInArr[1]}/${dateInArr[0]}`;
                 const strOut = `${dateOutArr[2]}/${dateOutArr[1]}/${dateOutArr[0]}`;
 
-                const text = `Olá! Tenho interesse em reservar o ${flatName}.%0AAs datas que selecionei no site são de ${strIn} a ${strOut}.%0AGostaria de mais informações e confirmar a reserva.`;
+                const text = encodeURIComponent(`Olá! Tenho interesse em reservar o ${flatName}.\nAs datas que selecionei no site são de ${strIn} a ${strOut}.\nGostaria de mais informações e confirmar a reserva.`);
                 whatsappBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
 
                 checkBtn.classList.add('hidden');
                 whatsappBtn.classList.remove('hidden');
+                whatsappBtn.style.display = 'flex'; // Ensure it's visible as flex
             } else if (availability === false) {
                 statusBox.classList.add('status-unavailable');
                 statusBox.innerHTML = '<i class="ph ph-x-circle"></i> Indisponível. Estas datas já estão ocupadas.';
                 whatsappBtn.classList.add('hidden');
+                whatsappBtn.style.display = 'none';
             } else if (availability === 'error') {
-                statusBox.classList.add('status-unavailable'); // Using caution/unavailable style
+                statusBox.classList.add('status-unavailable'); 
                 statusBox.innerHTML = '<i class="ph ph-warning"></i> Não foi possível verificar em tempo real agora. Entre em contato para confirmar.';
                 
                 // Still show WhatsApp button as fallback
-                const text = `Olá! Gostaria de verificar a disponibilidade do ${flatName} de ${checkin} a ${checkout}. O site não conseguiu consultar automaticamente o calendário.`;
+                const text = encodeURIComponent(`Olá! Gostaria de verificar a disponibilidade do ${flatName} de ${checkin} a ${checkout}. O site não conseguiu consultar automaticamente o calendário.`);
                 whatsappBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
                 whatsappBtn.classList.remove('hidden');
+                whatsappBtn.style.display = 'flex';
                 checkBtn.classList.add('hidden');
             }
         }, 800);
