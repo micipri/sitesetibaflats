@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setiba Flats - Experiência Premium à Beira-Mar</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="Hospedagem de alto padrão na Praia de Setiba com flats modernos, confortáveis e vista para o mar.">
+
+    <!-- Google Fonts: Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- FullCalendar / iCal (for future module, but keeping lightweight for custom JS parser) -->
+    <!-- We will use a lightweight custom parser in script.js to avoid heavy dependencies if possible -->
+</head>
+
+<body>
+
+    <!-- Header / Navbar -->
+    <header id="navbar" class="header">
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <span class="logo-accent">Setiba</span>Flats
+            </a>
+            <nav class="nav-links">
+                <a href="#unidades">Nossas Unidades</a>
+                <a href="#precos">Tabela de Preços</a>
+                <a href="#disponibilidade" class="btn-primary-outline">Ver Disponibilidade</a>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">
+                <i class="ph ph-list"></i>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="hero-section">
+            <div class="hero-overlay"></div>
+            <!-- We will use a placeholder background in CSS if the video fails, but we'll try to add an element for a background video if needed -->
+            <div class="hero-content container">
+                <h1>Sua Experiência <span class="highlight">Premium</span> em Setiba</h1>
+                <p>Desconecte-se da rotina em nossos flats exclusivos a poucos passos do mar. Conforto, design moderno e
+                    a brisa do oceano esperando por você.</p>
+                <div class="hero-buttons">
+                    <a href="#unidades" class="btn-primary">Conhecer os Flats</a>
+                    <a href="#precos" class="btn-secondary">Ver Preços</a>
+                </div>
+            </div>
+            <a href="#unidades" class="scroll-down">
+                <i class="ph ph-caret-down"></i>
+            </a>
+        </section>
+
+        <!-- Unidades (Grid) Section -->
+        <section id="unidades" class="units-section section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Nossas Unidades</h2>
+                    <p>Espaços cuidadosamente planejados para proporcionar conforto e bem-estar.</p>
+                </div>
+                <div class="units-grid">
+                    <!-- Flat Liberdade -->
+                    <article class="unit-card glass-card">
+                        <div class="unit-image-wrapper">
+                            <img src="img/liberdade/foto-principal.jpg" alt="Interior Flat Liberdade" class="unit-img"
+                                onerror="this.src='https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+                        </div>
+                        <div class="unit-content">
+                            <h3>Flat Liberdade</h3>
+                            <div class="unit-amenities">
+                                <span title="Ar Condicionado"><i class="ph ph-wind"></i></span>
+                                <span title="Wi-Fi Rápido"><i class="ph ph-wifi-high"></i></span>
+                                <span title="Cozinha Completa"><i class="ph ph-cooking-pot"></i></span>
+                                <span title="TV Smart"><i class="ph ph-television"></i></span>
+                            </div>
+                            <div class="unit-capacity">
+                                <i class="ph ph-users"></i> Até 3 pessoas
+                            </div>
+                            <p class="unit-desc">Espaço amplo e iluminado, confortável e premium.</p>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
+                                <button class="btn-primary-outline btn-gallery full-width" data-flat="liberdade">
+                                    <i class="ph ph-images"></i> Ver Fotos
+                                </button>
+                                <button class="btn-text btn-details full-width" data-flat="liberdade">
+                                    <i class="ph ph-plus"></i> Ver Detalhes e Comodidades
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Flat Sossego -->
+                    <article class="unit-card glass-card">
+                        <div class="unit-image-wrapper">
+                            <img src="img/sossego/foto-principal.jpg" alt="Interior Flat Sossego" class="unit-img"
+                                onerror="this.src='https://images.unsplash.com/photo-1502672260266-1c1de2d93688?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+                        </div>
+                        <div class="unit-content">
+                            <h3>Flat Sossego</h3>
+                            <div class="unit-amenities">
+                                <span title="Ar Condicionado"><i class="ph ph-wind"></i></span>
+                                <span title="Wi-Fi Rápido"><i class="ph ph-wifi-high"></i></span>
+                                <span title="Cozinha Completa"><i class="ph ph-cooking-pot"></i></span>
+                                <span title="TV Smart"><i class="ph ph-television"></i></span>
+                            </div>
+                            <div class="unit-capacity">
+                                <i class="ph ph-users"></i> Até 5 pessoas
+                            </div>
+                            <p class="unit-desc">Decoração minimalista e ambiente tranquilo com ótima ventilação.</p>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
+                                <button class="btn-primary-outline btn-gallery full-width" data-flat="sossego">
+                                    <i class="ph ph-images"></i> Ver Fotos
+                                </button>
+                                <button class="btn-text btn-details full-width" data-flat="sossego">
+                                    <i class="ph ph-plus"></i> Ver Detalhes e Comodidades
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Flat Brisas -->
+                    <article class="unit-card glass-card">
+                        <div class="unit-image-wrapper">
+                            <img src="img/brisas/foto-principal.jpg" alt="Interior Flat Brisas" class="unit-img"
+                                onerror="this.src='https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+                            <span class="unit-badge">Frente Mar</span>
+                        </div>
+                        <div class="unit-content">
+                            <h3>Flat Brisas</h3>
+                            <div class="unit-amenities">
+                                <span title="Ar Condicionado"><i class="ph ph-wind"></i></span>
+                                <span title="Wi-Fi Rápido"><i class="ph ph-wifi-high"></i></span>
+                                <span title="Cozinha Compacta"><i class="ph ph-cooking-pot"></i></span>
+                                <span title="TV Smart"><i class="ph ph-television"></i></span>
+                            </div>
+                            <div class="unit-capacity">
+                                <i class="ph ph-users"></i> Até 6 pessoas
+                            </div>
+                            <p class="unit-desc">Ambiente acolhedor e espaçoso com muita luz natural.</p>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
+                                <button class="btn-primary-outline btn-gallery full-width" data-flat="brisas">
+                                    <i class="ph ph-images"></i> Ver Fotos
+                                </button>
+                                <button class="btn-text btn-details full-width" data-flat="brisas">
+                                    <i class="ph ph-plus"></i> Ver Detalhes e Comodidades
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tabela de Preços Section -->
+        <section id="precos" class="pricing-section section-padding bg-light">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Tabela de Valores</h2>
+                    <p>Valores fixos praticados ao longo do ano. Transparência para o seu planejamento.</p>
+                </div>
+                <div class="pricing-grid">
+                    <!-- Dias de Semana -->
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <i class="ph ph-sun-dim"></i>
+                            <h3>Dias de Semana</h3>
+                            <p>Segunda a Quinta</p>
+                        </div>
+                        <div class="pricing-body">
+                            <ul>
+                                <li><strong>Flat Liberdade:</strong> R$ 240 / diária</li>
+                                <li><strong>Flat Sossego:</strong> R$ 270 / diária</li>
+                                <li><strong>Flat Brisas:</strong> R$ 320 / diária</li>
+                            </ul>
+                            <div class="minimum-stay">* Preço para casal. Adicional de R$ 80/pessoa extra por dia.</div>
+                        </div>
+                    </div>
+
+                    <!-- Finais de Semana -->
+                    <div class="pricing-card featured">
+                        <div class="popular-badge">Mais Procurado</div>
+                        <div class="pricing-header">
+                            <i class="ph ph-sun"></i>
+                            <h3>Finais de Semana</h3>
+                            <p>Sexta, Sábado e Domingo</p>
+                        </div>
+                        <div class="pricing-body">
+                            <ul>
+                                <li><strong>Flat Liberdade:</strong> R$ 290 / diária</li>
+                                <li><strong>Flat Sossego:</strong> R$ 330 / diária</li>
+                                <li><strong>Flat Brisas:</strong> R$ 370 / diária</li>
+                            </ul>
+                            <div class="minimum-stay">* Preço para casal. Adicional de R$ 80/pessoa extra por dia.</div>
+                        </div>
+                    </div>
+
+                    <!-- Alta Temporada e Feriados -->
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <i class="ph ph-calendar-star"></i>
+                            <h3>Alta Temporada</h3>
+                            <p>Feriados e Meses de Alta</p>
+                        </div>
+                        <div class="pricing-body">
+                            <ul>
+                                <li><strong>Flat Liberdade:</strong> R$ 320 / diária</li>
+                                <li><strong>Flat Sossego:</strong> R$ 370 / diária</li>
+                                <li><strong>Flat Brisas:</strong> R$ 430 / diária</li>
+                            </ul>
+                            <div class="minimum-stay">* Preço para casal. Adicional de R$ 80/pessoa extra por dia.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Availability / Booking Section -->
+        <section id="disponibilidade" class="booking-section section-padding">
+            <div class="container">
+                <div class="booking-container glass-card">
+                    <div class="booking-info">
+                        <h2>Verificar Disponibilidade</h2>
+                        <p>Selecione a unidade e as datas desejadas. Verificaremos em tempo real com nosso calendário.
+                        </p>
+                    </div>
+
+                    <form id="booking-form" class="booking-form">
+                        <div class="form-group">
+                            <label for="flat-select">Qual Flat?</label>
+                            <div class="custom-select-wrapper">
+                                <select id="flat-select" required>
+                                    <option value="" disabled selected>Escolha sua unidade</option>
+                                    <option value="liberdade">Flat Liberdade</option>
+                                    <option value="sossego">Flat Sossego</option>
+                                    <option value="brisas">Flat Brisas</option>
+                                </select>
+                                <i class="ph ph-caret-down select-icon"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="checkin">Check-in</label>
+                                <input type="date" id="checkin" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="checkout">Check-out</label>
+                                <input type="date" id="checkout" required>
+                            </div>
+                        </div>
+
+                        <div id="availability-status" class="status-message hidden">
+                            <!-- Messages will be injected here via JS -->
+                        </div>
+
+                        <button type="submit" id="check-btn" class="btn-primary full-width">
+                            <i class="ph ph-magnifying-glass"></i> Consultar Datas
+                        </button>
+
+                        <a href="#" id="whatsapp-btn" class="btn-whatsapp full-width hidden" target="_blank"
+                            rel="noopener noreferrer">
+                            <i class="ph ph-whatsapp-logo"></i> Solicitar Reserva no WhatsApp
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        </section>
+
+        <!-- A Casa Section -->
+        <section id="a-casa" class="casa-section section-padding">
+            <div class="container casa-grid">
+                <div class="casa-content">
+                    <div class="section-header align-left">
+                        <h2>A Casa</h2>
+                        <p>Ambiente seguro, familiar e com espaços compartilhados para sua conveniência.</p>
+                    </div>
+
+                    <div class="casa-description">
+                        <p>Os três flats estão acomodados dentro da mesma casa. O acesso é feito pela garagem, onde cada
+                            flat possui uma vaga independente. A garagem é coberta, segura e conta com portão
+                            automático.</p>
+                        <p>Subindo a escada, você tem acesso à nossa espaçosa varanda panorâmica com vista para o mar. A
+                            entrada de cada flat é independente e bem reservada.</p>
+                        <p>Além da varanda, temos também um belo jardim agradável. Aos fundos da casa, oferecemos acesso
+                            a uma lavanderia disponível para nossos hóspedes.</p>
+                        <p class="casa-warning"><i class="ph ph-warning-circle"></i> <strong>Atenção:</strong> Não
+                            possuímos área de churrasco, pois não é permitido fazer churrasco em nenhuma área da casa.
+                        </p>
+                    </div>
+
+                    <div class="casa-amenities">
+                        <h4>Espaços Compartilhados</h4>
+                        <ul>
+                            <li><i class="ph ph-car"></i> Garagem c/ vaga independente e portão automático</li>
+                            <li><i class="ph ph-binoculars"></i> Varanda panorâmica com vista para o mar</li>
+                            <li><i class="ph ph-plant"></i> Belo jardim arborizado</li>
+                            <li><i class="ph ph-washing-machine"></i> Lavanderia disponível</li>
+                            <li><i class="ph ph-door"></i> Entradas independentes para os flats</li>
+                        </ul>
+                    </div>
+
+                    <button class="btn-primary-outline btn-gallery" style="margin-top: 2rem;" data-flat="casa">
+                        <i class="ph ph-images"></i> Ver Fotos da Casa
+                    </button>
+                </div>
+
+                <div class="casa-image">
+                    <!-- Placeholder representing the house -->
+                    <img src="img/casa/galeria/GPTempDownload.JPG" alt="Visão da Casa Setiba Flats"
+                        class="casa-main-img"
+                        onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+                </div>
+            </div>
+        </section>
+
+        <!-- Localização Section -->
+        <section id="localizacao" class="location-section section-padding bg-light">
+            <div class="container location-grid">
+                <div class="location-content">
+                    <div class="section-header align-left">
+                        <h2>Explore Setiba</h2>
+                        <p>A localização privilegiada que coloca você a poucos passos das melhores praias de Guarapari.
+                        </p>
+                    </div>
+                    <ul class="location-highlights">
+                        <li>
+                            <div class="icon-box"><i class="ph ph-map-pin"></i></div>
+                            <div>
+                                <h4>Praia de Setiba</h4>
+                                <p>A apenas 50 metros da sua porta. Águas calmas e areia dourada.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="icon-box"><i class="ph ph-tree-palm"></i></div>
+                            <div>
+                                <h4>Reserva Paulo César Vinha</h4>
+                                <p>Natureza preservada com trilhas ecológicas e praias intocáveis.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="icon-box"><i class="ph ph-mountains"></i></div>
+                            <div>
+                                <h4>Morro do Cruzeiro</h4>
+                                <p>Mirante com vista panorâmica espetacular da região.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="location-map">
+                    <!-- Placeholder map or elegant graphic -->
+                    <div class="map-placeholder">
+                        <img src="img/local/mapa-setiba.jpg" alt="Praia de Setiba" class="map-img"
+                            onerror="this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+                        <div class="map-overlay-card glass-card">
+                            <i class="ph ph-map-pin-line"></i>
+                            <span>Setiba, Guarapari - ES</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <a href="#" class="logo">
+                    <span class="logo-accent">Setiba</span>Flats
+                </a>
+                <p>O seu refúgio particular no litoral capixaba.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Links Rápidos</h4>
+                <a href="#unidades">Unidades</a>
+                <a href="#precos">Valores</a>
+                <a href="#disponibilidade">Reservas</a>
+            </div>
+            <div class="footer-social">
+                <h4>Siga-nos</h4>
+                <a href="https://instagram.com/SetibaFlats" target="_blank" rel="noopener noreferrer"
+                    class="social-link">
+                    <i class="ph ph-instagram-logo"></i> @SetibaFlats
+                </a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="current-year"></span> Setiba Flats. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/5527999999999?text=Olá!%20Gostaria%20de%20informações%20sobre%20os%20flats."
+        class="floating-whatsapp" target="_blank" rel="noopener noreferrer" aria-label="Falar no WhatsApp">
+        <i class="ph ph-whatsapp-logo"></i>
+    </a>
+
+    <!-- Lightbox Gallery Modal -->
+    <div id="lightbox-modal" class="lightbox hidden">
+        <div class="lightbox-overlay"></div>
+        <button class="lightbox-close"><i class="ph ph-x"></i></button>
+        <div class="lightbox-content">
+            <button class="lightbox-prev"><i class="ph ph-caret-left"></i></button>
+            <img id="lightbox-img" src="" alt="Galeria">
+            <button class="lightbox-next"><i class="ph ph-caret-right"></i></button>
+        </div>
+        <div class="lightbox-counter"><span id="lightbox-current">1</span> / <span id="lightbox-total">5</span></div>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="details-modal" class="lightbox hidden">
+        <div class="lightbox-overlay details-overlay"></div>
+        <div class="details-modal-content glass-card">
+            <button class="details-close"><i class="ph ph-x"></i></button>
+            <h3 id="details-title">Nome do Flat</h3>
+            <p id="details-desc" class="details-desc">Descrição do Flat</p>
+
+            <h4>Comodidades Inclusas</h4>
+            <div id="details-amenities" class="details-amenities-grid">
+                <!-- Injected via JS -->
+            </div>
+
+            <div class="details-footer">
+                <i class="ph ph-check-circle"></i> Fornecemos roupas de cama e banho em todas as hospedagens.
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+
+</html>

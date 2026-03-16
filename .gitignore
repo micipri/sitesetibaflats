@@ -1,0 +1,12 @@
+.DS_Store
+node_modules/
+.env
+*.log
+.vscode/
+.gemini/
+dist/
+build/
+.cache/
+.github/
+Desktop.ini
+Thumbs.db
