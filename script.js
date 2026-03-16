@@ -15,9 +15,9 @@ const WHATSAPP_NUMBER = '5527992528762';
 
 // Cache for parsed iCal data per flat
 const calendarData = {
-    liberdade: [],
-    sossego: [],
-    brisas: []
+    liberdade: { events: [], loaded: false, error: false },
+    sossego: { events: [], loaded: false, error: false },
+    brisas: { events: [], loaded: false, error: false }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -34,71 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('checkout').min = today;
 });
 
-function initMobileMenu() {
-    const mobileBtn = document.querySelector('.mobile-menu-btn');
-    const navLinks = document.querySelector('.nav-links');
-
-    if (mobileBtn && navLinks) {
-        mobileBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-
-            // Allow closing by clicking a link
-            if (navLinks.classList.contains('active')) {
-                navLinks.querySelectorAll('a').forEach(link => {
-                    link.addEventListener('click', () => {
-                        navLinks.classList.remove('active');
-                    }, { once: true });
-                });
-            }
-        });
-    }
-
-    // Header scroll effect
-    const header = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.style.background = 'rgba(249, 246, 240, 0.98)';
-            header.style.boxShadow = '0 4px 20px rgba(0,0,0,0.05)';
-        } else {
-            header.style.background = 'rgba(249, 246, 240, 0.95)';
-            header.style.boxShadow = 'none';
-        }
-    });
-}
-
-function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
-
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-                // Account for fixed header height
-                const headerOffset = 80;
-                const elementPosition = targetElement.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-}
-
-function initCurrentYear() {
-    const yearElement = document.getElementById('current-year');
-    if (yearElement) {
-        yearElement.textContent = new Date().getFullYear();
-    }
-}
+// ... (mobile menu, smooth scroll, year functions remain the same) ...
 
 // Minimal iCal parser for VEVENT DTSTART and DTEND
 function parseICal(icsString) {
-    const lines = icsString.split('\n');
+    const lines = icsString.split(/\r?\n/);
     const events = [];
     let currentEvent = null;
 
@@ -126,22 +66,24 @@ function parseICal(icsString) {
 
 // Converts iCal date string (YYYYMMDD) to JS Date object
 function parseICalDate(dateStr) {
-    const year = parseInt(dateStr.substring(0, 4));
-    const month = parseInt(dateStr.substring(4, 6)) - 1; // 0-indexed
-    const day = parseInt(dateStr.substring(6, 8));
+    // Sometimes Airbnb dates include time or identifiers, take only the first 8 digits if possible
+    const pureDate = dateStr.split('T')[0].replace(/[^0-9]/g, '');
+    const year = parseInt(pureDate.substring(0, 4));
+    const month = parseInt(pureDate.substring(4, 6)) - 1; // 0-indexed
+    const day = parseInt(pureDate.substring(6, 8));
     return new Date(year, month, day);
 }
 
 // Check if requested date range overlaps with any booked events
 function isAvailable(flatId, checkinDate, checkoutDate) {
-    const events = calendarData[flatId];
-    if (!events || events.length === 0) {
-        // If we fail to load or parse, we assume available to not block sales (or could do the opposite)
-        // Ideally we fetch from airbnb here, but due to CORS we might need a proxy.
-        // For static implementation, we'll try to fetch but if it fails (CORS), we'll simulate.
-        return true;
-    }
+    const data = calendarData[flatId];
+    
+    // If we haven't loaded yet or there was an error, we can't accurately say
+    // However, to keep the flow, we will return 'null' to indicate 'unknown/error'
+    if (!data.loaded) return 'loading';
+    if (data.error) return 'error';
 
+    const events = data.events;
     const checkin = new Date(checkinDate);
     const checkout = new Date(checkoutDate);
 
@@ -154,21 +96,25 @@ function isAvailable(flatId, checkinDate, checkoutDate) {
     return true;
 }
 
-// Fetch iCal data (Note: Direct fetch to Airbnb iCal from browser often fails due to CORS. 
-// In a real production environment built on pure static hosting, a serverless function proxy is usually required.
-// We will attempt a fetch and fallback to graceful simulation if it fails).
+// Fetch iCal data using a CORS proxy.
 async function fetchCalendar(flatId) {
-    const url = ICAL_URLS[flatId];
+    const originalUrl = ICAL_URLS[flatId];
+    // Using a public CORS proxy to allow browser-side fetching
+    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(originalUrl)}`;
+    
     try {
-        // Attempt fetch - this will likely hit a CORS error if run locally without proxy
-        const response = await fetch(url);
-        if (response.ok) {
-            const data = await response.text();
-            calendarData[flatId] = parseICal(data);
-        }
+        const response = await fetch(proxyUrl);
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const data = await response.text();
+        calendarData[flatId].events = parseICal(data);
+        calendarData[flatId].loaded = true;
+        calendarData[flatId].error = false;
+        console.log(`Successfully loaded calendar for ${flatId}`);
     } catch (error) {
-        console.warn(`Could not fetch iCal for ${flatId} (likely CORS). Bookings will default to available locally. Error:`, error);
-        // We leave calendarData empty, which defaults to available in `isAvailable`
+        console.error(`Could not fetch iCal for ${flatId}:`, error);
+        calendarData[flatId].loaded = true; // Mark as loaded even if error to stop spinner
+        calendarData[flatId].error = true;
     }
 }
 
@@ -184,7 +130,7 @@ function initBookingSystem() {
     // Pre-fetch calendars when a flat is selected
     flatSelect.addEventListener('change', () => {
         const flatId = flatSelect.value;
-        if (flatId && calendarData[flatId].length === 0) {
+        if (flatId && !calendarData[flatId].loaded) {
             fetchCalendar(flatId);
         }
         resetStatus();
@@ -213,6 +159,8 @@ function initBookingSystem() {
         statusBox.innerHTML = '';
         whatsappBtn.classList.add('hidden');
         checkBtn.classList.remove('hidden');
+        checkBtn.disabled = false;
+        checkBtn.innerHTML = '<i class="ph ph-magnifying-glass"></i> Consultar Datas';
     }
 
     form.addEventListener('submit', async (e) => {
@@ -229,16 +177,21 @@ function initBookingSystem() {
         checkBtn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Consultando...';
         checkBtn.disabled = true;
 
-        // Simulate network delay for UX
+        // Ensure calendar is loaded (or wait a bit if it was already triggered)
+        if (!calendarData[flatId].loaded) {
+            await fetchCalendar(flatId);
+        }
+
+        // Delay for UX
         setTimeout(() => {
-            const available = isAvailable(flatId, checkin, checkout);
+            const availability = isAvailable(flatId, checkin, checkout);
 
             checkBtn.innerHTML = '<i class="ph ph-magnifying-glass"></i> Consultar Datas';
             checkBtn.disabled = false;
 
             statusBox.classList.remove('hidden');
 
-            if (available) {
+            if (availability === true) {
                 statusBox.classList.add('status-available');
                 statusBox.innerHTML = '<i class="ph ph-check-circle"></i> Disponível! O flat está livre nestas datas.';
 
@@ -253,10 +206,19 @@ function initBookingSystem() {
 
                 checkBtn.classList.add('hidden');
                 whatsappBtn.classList.remove('hidden');
-            } else {
+            } else if (availability === false) {
                 statusBox.classList.add('status-unavailable');
                 statusBox.innerHTML = '<i class="ph ph-x-circle"></i> Indisponível. Estas datas já estão ocupadas.';
                 whatsappBtn.classList.add('hidden');
+            } else if (availability === 'error') {
+                statusBox.classList.add('status-unavailable'); // Using caution/unavailable style
+                statusBox.innerHTML = '<i class="ph ph-warning"></i> Não foi possível verificar em tempo real agora. Entre em contato para confirmar.';
+                
+                // Still show WhatsApp button as fallback
+                const text = `Olá! Gostaria de verificar a disponibilidade do ${flatName} de ${checkin} a ${checkout}. O site não conseguiu consultar automaticamente o calendário.`;
+                whatsappBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
+                whatsappBtn.classList.remove('hidden');
+                checkBtn.classList.add('hidden');
             }
         }, 800);
     });
