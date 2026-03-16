@@ -1192,6 +1192,19 @@ select:focus {
         gap: 3rem;
     }
 
+    .casa-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .casa-image {
+        order: -1; /* Place image at the top on mobile */
+    }
+
+    .casa-main-img {
+        aspect-ratio: 3/2; /* Wider aspect ratio for mobile screens */
+    }
+
     .pricing-card.featured {
         transform: none;
     }

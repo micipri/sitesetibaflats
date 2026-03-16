@@ -311,7 +311,7 @@ function initLightbox() {
             "GPTempDownload 2.JPG", "GPTempDownload 3.JPG", "GPTempDownload 4.JPG", "GPTempDownload 5.JPG", "GPTempDownload 6.JPG", "GPTempDownload 11.JPG"
         ],
         casa: [
-            "../frentecasa.png" // Relative to the gallery path logic or I'll fix the logic below
+            "../frentecasa.png", "garagem.jpg", "jardim.png", "varanda01.JPG", "varanda02.JPG", "varanda03.JPG"
         ]
     };
 
