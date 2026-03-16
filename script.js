@@ -34,7 +34,67 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('checkout').min = today;
 });
 
-// ... (mobile menu, smooth scroll, year functions remain the same) ...
+function initMobileMenu() {
+    const mobileBtn = document.querySelector('.mobile-menu-btn');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (mobileBtn && navLinks) {
+        mobileBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+
+            // Allow closing by clicking a link
+            if (navLinks.classList.contains('active')) {
+                navLinks.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        navLinks.classList.remove('active');
+                    }, { once: true });
+                });
+            }
+        });
+    }
+
+    // Header scroll effect
+    const header = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            header.style.background = 'rgba(249, 246, 240, 0.98)';
+            header.style.boxShadow = '0 4px 20px rgba(0,0,0,0.05)';
+        } else {
+            header.style.background = 'rgba(249, 246, 240, 0.95)';
+            header.style.boxShadow = 'none';
+        }
+    });
+}
+
+function initSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                // Account for fixed header height
+                const headerOffset = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+}
+
+function initCurrentYear() {
+    const yearElement = document.getElementById('current-year');
+    if (yearElement) {
+        yearElement.textContent = new Date().getFullYear();
+    }
+}
 
 // Minimal iCal parser for VEVENT DTSTART and DTEND
 function parseICal(icsString) {
