@@ -138,8 +138,10 @@ function parseICalDate(dateStr) {
 }
 
 // Check if requested date range overlaps with any booked events.
-// Airbnb marks occupied dates with SUMMARY containing "not available" (case-insensitive).
-// Only those events are treated as occupancy blocks.
+// Airbnb exports two types of blocking events:
+//   - "Airbnb (Not available)": blocked dates (no booking)
+//   - "Reserved": actual guest reservation
+// ALL events in the iCal mean the property is unavailable.
 function isAvailable(flatId, checkinDate, checkoutDate) {
     const data = calendarData[flatId];
     if (!data.loaded) return 'loading';
@@ -150,11 +152,6 @@ function isAvailable(flatId, checkinDate, checkoutDate) {
     const checkout = new Date(checkoutDate);
 
     for (const event of events) {
-        // Only consider events that Airbnb marks as "not available"
-        const summary = (event.summary || '').toLowerCase();
-        const isOccupied = summary.includes('not available') || summary.includes('airbnb');
-        if (!isOccupied) continue;
-
         // Conflict: checkin before event ends AND checkout after event starts
         if (checkin < event.end && checkout > event.start) {
             return false;
