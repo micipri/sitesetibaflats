@@ -164,9 +164,9 @@ function isAvailable(flatId, checkinDate, checkoutDate) {
 async function fetchCalendar(flatId) {
     const originalUrl = ICAL_URLS[flatId];
     const proxies = [
+        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(originalUrl)}`,
         `https://api.allorigins.win/raw?url=${encodeURIComponent(originalUrl)}`,
-        `https://corsproxy.io/?${encodeURIComponent(originalUrl)}`,
-        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(originalUrl)}`
+        `https://corsproxy.io/?${encodeURIComponent(originalUrl)}`
     ];
 
     for (const proxyUrl of proxies) {
