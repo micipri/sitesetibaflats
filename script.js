@@ -166,13 +166,13 @@ async function fetchCalendar(flatId) {
     const proxies = [
         `https://api.allorigins.win/raw?url=${encodeURIComponent(originalUrl)}`,
         `https://corsproxy.io/?${encodeURIComponent(originalUrl)}`,
-        `https://thingproxy.freeboard.io/fetch/${originalUrl}`
+        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(originalUrl)}`
     ];
 
     for (const proxyUrl of proxies) {
         // Use AbortController for broad browser compatibility (instead of AbortSignal.timeout)
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s timeout
         try {
             const response = await fetch(proxyUrl, { signal: controller.signal });
             clearTimeout(timeoutId);
