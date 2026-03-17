@@ -164,14 +164,18 @@ function isAvailable(flatId, checkinDate, checkoutDate) {
 async function fetchCalendar(flatId) {
     const originalUrl = ICAL_URLS[flatId];
     const proxies = [
-        `https://corsproxy.io/?${encodeURIComponent(originalUrl)}`,
         `https://api.allorigins.win/raw?url=${encodeURIComponent(originalUrl)}`,
+        `https://corsproxy.io/?${encodeURIComponent(originalUrl)}`,
         `https://thingproxy.freeboard.io/fetch/${originalUrl}`
     ];
 
     for (const proxyUrl of proxies) {
+        // Use AbortController for broad browser compatibility (instead of AbortSignal.timeout)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
         try {
-            const response = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
+            const response = await fetch(proxyUrl, { signal: controller.signal });
+            clearTimeout(timeoutId);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
             const text = await response.text();
@@ -184,6 +188,7 @@ async function fetchCalendar(flatId) {
             console.log(`Calendar loaded for ${flatId} via ${proxyUrl}`);
             return; // Success — stop trying other proxies
         } catch (error) {
+            clearTimeout(timeoutId);
             console.warn(`Proxy failed for ${flatId} (${proxyUrl}):`, error.message);
         }
     }
@@ -212,17 +217,23 @@ function initBookingSystem() {
         resetStatus();
     });
 
-    // Auto-adjust checkout to be at least 1 day after checkin if needed
+    // Auto-adjust checkout and focus it when checkin is filled
     checkinInput.addEventListener('change', () => {
         if (checkinInput.value) {
-            const inDate = new Date(checkinInput.value);
+            const inDate = new Date(checkinInput.value + 'T00:00:00');
             const nextDay = new Date(inDate);
             nextDay.setDate(nextDay.getDate() + 1);
             checkoutInput.min = nextDay.toISOString().split('T')[0];
 
-            if (checkoutInput.value && new Date(checkoutInput.value) <= inDate) {
-                checkoutInput.value = checkoutInput.min;
+            if (checkoutInput.value && new Date(checkoutInput.value + 'T00:00:00') <= inDate) {
+                checkoutInput.value = '';
             }
+
+            // Enable checkout and move focus there
+            checkoutInput.disabled = false;
+            checkoutInput.focus();
+            // On mobile, open the date picker
+            try { checkoutInput.showPicker(); } catch (_) {}
         }
         resetStatus();
     });
