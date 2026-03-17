@@ -96,16 +96,18 @@ function initCurrentYear() {
     }
 }
 
-// Minimal iCal parser for VEVENT DTSTART and DTEND
+// iCal parser: captures DTSTART, DTEND and SUMMARY from each VEVENT
 function parseICal(icsString) {
-    const lines = icsString.split(/\r?\n/);
+    // Handle iCal line folding (lines that begin with a space or tab are continuations)
+    const unfolded = icsString.replace(/\r?\n[ \t]/g, '');
+    const lines = unfolded.split(/\r?\n/);
     const events = [];
     let currentEvent = null;
 
     for (let line of lines) {
         line = line.trim();
         if (line === 'BEGIN:VEVENT') {
-            currentEvent = {};
+            currentEvent = { summary: '' };
         } else if (line === 'END:VEVENT') {
             if (currentEvent && currentEvent.start && currentEvent.end) {
                 events.push(currentEvent);
@@ -113,20 +115,21 @@ function parseICal(icsString) {
             currentEvent = null;
         } else if (currentEvent) {
             if (line.startsWith('DTSTART')) {
-                const parts = line.split(':');
-                if (parts.length > 1) currentEvent.start = parseICalDate(parts[1]);
+                const val = line.split(':').slice(1).join(':');
+                currentEvent.start = parseICalDate(val);
             } else if (line.startsWith('DTEND')) {
-                const parts = line.split(':');
-                if (parts.length > 1) currentEvent.end = parseICalDate(parts[1]);
+                const val = line.split(':').slice(1).join(':');
+                currentEvent.end = parseICalDate(val);
+            } else if (line.startsWith('SUMMARY')) {
+                currentEvent.summary = line.split(':').slice(1).join(':');
             }
         }
     }
     return events;
 }
 
-// Converts iCal date string (YYYYMMDD) to JS Date object
+// Converts iCal date string (YYYYMMDD or YYYYMMDDTHHMMSSZ) to JS Date object
 function parseICalDate(dateStr) {
-    // Sometimes Airbnb dates include time or identifiers, take only the first 8 digits if possible
     const pureDate = dateStr.split('T')[0].replace(/[^0-9]/g, '');
     const year = parseInt(pureDate.substring(0, 4));
     const month = parseInt(pureDate.substring(4, 6)) - 1; // 0-indexed
@@ -134,12 +137,11 @@ function parseICalDate(dateStr) {
     return new Date(year, month, day);
 }
 
-// Check if requested date range overlaps with any booked events
+// Check if requested date range overlaps with any booked events.
+// Airbnb marks occupied dates with SUMMARY containing "not available" (case-insensitive).
+// Only those events are treated as occupancy blocks.
 function isAvailable(flatId, checkinDate, checkoutDate) {
     const data = calendarData[flatId];
-    
-    // If we haven't loaded yet or there was an error, we can't accurately say
-    // However, to keep the flow, we will return 'null' to indicate 'unknown/error'
     if (!data.loaded) return 'loading';
     if (data.error) return 'error';
 
@@ -148,7 +150,12 @@ function isAvailable(flatId, checkinDate, checkoutDate) {
     const checkout = new Date(checkoutDate);
 
     for (const event of events) {
-        // Conflict occurs if checkin is before event ends AND checkout is after event starts
+        // Only consider events that Airbnb marks as "not available"
+        const summary = (event.summary || '').toLowerCase();
+        const isOccupied = summary.includes('not available') || summary.includes('airbnb');
+        if (!isOccupied) continue;
+
+        // Conflict: checkin before event ends AND checkout after event starts
         if (checkin < event.end && checkout > event.start) {
             return false;
         }
@@ -156,26 +163,38 @@ function isAvailable(flatId, checkinDate, checkoutDate) {
     return true;
 }
 
-// Fetch iCal data using a CORS proxy.
+// Fetch iCal data trying multiple CORS proxies as fallbacks.
 async function fetchCalendar(flatId) {
     const originalUrl = ICAL_URLS[flatId];
-    // Using a public CORS proxy to allow browser-side fetching
-    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(originalUrl)}`;
-    
-    try {
-        const response = await fetch(proxyUrl);
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        const data = await response.text();
-        calendarData[flatId].events = parseICal(data);
-        calendarData[flatId].loaded = true;
-        calendarData[flatId].error = false;
-        console.log(`Successfully loaded calendar for ${flatId}`);
-    } catch (error) {
-        console.error(`Could not fetch iCal for ${flatId}:`, error);
-        calendarData[flatId].loaded = true; // Mark as loaded even if error to stop spinner
-        calendarData[flatId].error = true;
+    const proxies = [
+        `https://corsproxy.io/?${encodeURIComponent(originalUrl)}`,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(originalUrl)}`,
+        `https://thingproxy.freeboard.io/fetch/${originalUrl}`
+    ];
+
+    for (const proxyUrl of proxies) {
+        try {
+            const response = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+            const text = await response.text();
+            // Validate that it is a valid iCal file
+            if (!text.includes('BEGIN:VCALENDAR')) throw new Error('Not a valid iCal response');
+
+            calendarData[flatId].events = parseICal(text);
+            calendarData[flatId].loaded = true;
+            calendarData[flatId].error = false;
+            console.log(`Calendar loaded for ${flatId} via ${proxyUrl}`);
+            return; // Success — stop trying other proxies
+        } catch (error) {
+            console.warn(`Proxy failed for ${flatId} (${proxyUrl}):`, error.message);
+        }
     }
+
+    // All proxies failed
+    console.error(`All proxies failed for ${flatId}`);
+    calendarData[flatId].loaded = true;
+    calendarData[flatId].error = true;
 }
 
 function initBookingSystem() {
